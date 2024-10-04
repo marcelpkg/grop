@@ -53,14 +53,13 @@ func searchDirectory(dirPath string, target string, resultChan chan string, wg *
         if file.IsDir() {
             wg.Add(1)
             go searchDirectory(path, target,  resultChan, wg)
-        } else {
-            if !skipFile(filepath.Ext(path)) {
-                wg.Add(1)
-                go searchFile(path, target, resultChan, wg)
-            }
-        } 
-    }
+        } else if !skipFile(filepath.Ext(path)) {
+            wg.Add(1)
+            go searchFile(path, target, resultChan, wg)
+        }
+    } 
 }
+
 
 func searchFile(path string, target string, resultChan chan string, wg *sync.WaitGroup) {
     defer wg.Done()
@@ -88,7 +87,7 @@ func main() {
 
     if len(args) < 3 {
         log.Fatal("usage: grop <string> <directory>")
-        os.Exit(3)
+        os.Exit(1)
     }
 
     target := args[1]
@@ -102,7 +101,6 @@ func main() {
         }
     }()
 
-    wg.Add(1)
     go searchDirectory(rootDir, target, resultChan, &wg)
     
     wg.Wait()
