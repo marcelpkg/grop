@@ -101,6 +101,7 @@ func main() {
         }
     }()
 
+    wg.Add(1)
     go searchDirectory(rootDir, target, resultChan, &wg)
     
     wg.Wait()
