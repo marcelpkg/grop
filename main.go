@@ -101,22 +101,8 @@ func main() {
         }
     }()
 
-    files, err := os.ReadDir(rootDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, file := range files {
-        path := filepath.Join(rootDir, file.Name())
-
-        if file.IsDir() {
-            wg.Add(1)
-            go searchDirectory(path, target, resultChan, &wg)
-        } else {
-            wg.Add(1)
-            go searchFile(path, target, resultChan, &wg)
-        } 
-    }
+    wg.Add(1)
+    go searchDirectory(rootDir, target, resultChan, &wg)
     
     wg.Wait()
     close(resultChan)
