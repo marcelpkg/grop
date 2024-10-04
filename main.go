@@ -38,16 +38,17 @@ func skipFile(ext string) bool {
     return skip[ext]
 }
 
-func searchDirectory(dirpath string, target string, resultChan chan string, wg *sync.WaitGroup) {
+func searchDirectory(dirPath string, target string, resultChan chan string, wg *sync.WaitGroup) {
     defer wg.Done()
-    files, err := os.ReadDir(dirpath)
+
+    files, err := os.ReadDir(dirPath)
 	if err != nil {
-		fmt.Println(err)
+        fmt.Println("error in searching directory [", dirPath, "] Error: " , err)
         return
 	}
 
 	for _, file := range files {
-        path := filepath.Join(dirpath, file.Name())
+        path := filepath.Join(dirPath, file.Name())
 
         if file.IsDir() {
             wg.Add(1)
@@ -63,12 +64,12 @@ func searchDirectory(dirpath string, target string, resultChan chan string, wg *
 
 func searchFile(path string, target string, resultChan chan string, wg *sync.WaitGroup) {
     defer wg.Done()
+
     file, err := os.Open(path)
     if err != nil {
-        fmt.Println(err)
+        fmt.Println("error opening file [", path, "] Error: ", err)
         return
     }
-
     defer file.Close()
 
     scanner := bufio.NewScanner(file)
